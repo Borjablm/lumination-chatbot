@@ -1,0 +1,334 @@
+/* ── Lumination Chatbot — Shared Variables & Base ── */
+
+.lmc-chatbot {
+  --lmc-primary: #6C5CE7;
+  --lmc-primary-hover: var(--lmc-primary);
+  --lmc-btn-text: #fff;
+  --lmc-radius: 16px;
+  --lmc-panel-w: 360px;
+  --lmc-panel-h: 520px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #222;
+  box-sizing: border-box;
+}
+
+.lmc-chatbot *, .lmc-chatbot *::before, .lmc-chatbot *::after {
+  box-sizing: inherit;
+}
+
+/* ── Floating Mode ── */
+
+.lmc-chatbot--floating {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+}
+
+/* Floating bubble button */
+.lmc-chatbot--floating .lmc-bubble {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: var(--lmc-primary);
+  color: var(--lmc-btn-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  padding: 0;
+}
+
+.lmc-chatbot--floating .lmc-bubble:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
+  background: var(--lmc-primary-hover);
+}
+
+/* Floating panel: positioned above the bubble */
+.lmc-chatbot--floating .lmc-panel {
+  position: absolute;
+  bottom: 72px;
+  right: 0;
+  width: var(--lmc-panel-w);
+  height: var(--lmc-panel-h);
+  background: var(--lmc-bg, #fff);
+  border-radius: var(--lmc-radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Embedded Mode ── */
+
+.lmc-chatbot--embed {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.lmc-chatbot--embed .lmc-bubble {
+  display: none; /* no bubble in embed mode */
+}
+
+.lmc-chatbot--embed .lmc-panel {
+  position: relative;
+  width: 100%;
+  min-height: 600px;
+  height: 70vh;
+  max-height: 800px;
+  background: var(--lmc-bg, #fff);
+  border: 1px solid #e0e0e0;
+  border-radius: var(--lmc-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Embed header: subtle bottom border instead of heavy colored bar */
+.lmc-chatbot--embed .lmc-header {
+  background: var(--lmc-bg, #fff);
+  color: #222;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px;
+}
+
+.lmc-chatbot--embed .lmc-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--lmc-primary);
+}
+
+/* Wider, centered message column */
+.lmc-chatbot--embed .lmc-messages {
+  padding: 24px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  gap: 14px;
+}
+
+.lmc-chatbot--embed .lmc-msg {
+  max-width: 90%;
+  padding: 12px 18px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.lmc-chatbot--embed .lmc-msg-assistant {
+  max-width: 95%;
+}
+
+/* Spacious input area */
+.lmc-chatbot--embed .lmc-form {
+  padding: 16px 24px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  border-top: 1px solid #e0e0e0;
+  gap: 12px;
+}
+
+.lmc-chatbot--embed .lmc-input {
+  padding: 12px 18px;
+  font-size: 15px;
+  border-radius: 24px;
+}
+
+.lmc-chatbot--embed .lmc-send {
+  width: 42px;
+  height: 42px;
+}
+
+/* ── Shared Panel Components ── */
+
+/* Header */
+.lmc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--lmc-primary);
+  color: var(--lmc-btn-text);
+  flex-shrink: 0;
+}
+
+.lmc-title {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.lmc-close {
+  background: none;
+  border: none;
+  color: var(--lmc-btn-text);
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.lmc-close:hover { opacity: 1; }
+
+/* Messages */
+.lmc-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+.lmc-msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: var(--lmc-radius);
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.lmc-msg-user {
+  align-self: flex-end;
+  background: var(--lmc-primary);
+  color: var(--lmc-btn-text);
+  border-bottom-right-radius: 4px;
+}
+
+.lmc-msg-assistant {
+  align-self: flex-start;
+  background: #f0f0f0;
+  color: #222;
+  border-bottom-left-radius: 4px;
+}
+
+.lmc-msg-assistant strong { font-weight: 600; }
+
+.lmc-msg-assistant em { font-style: italic; }
+
+.lmc-msg-assistant pre {
+  background: #e4e4e4;
+  padding: 8px 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 12px;
+  margin: 6px 0;
+}
+
+.lmc-msg-assistant code {
+  font-size: 12px;
+  background: #e4e4e4;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.lmc-msg-assistant pre code {
+  background: none;
+  padding: 0;
+}
+
+.lmc-msg-assistant ul,
+.lmc-msg-assistant ol {
+  margin: 4px 0;
+  padding-left: 20px;
+}
+
+.lmc-msg-assistant li { margin: 2px 0; }
+
+.lmc-msg-assistant p { margin: 4px 0; }
+
+.lmc-msg-assistant h1,
+.lmc-msg-assistant h2,
+.lmc-msg-assistant h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 6px 0 2px;
+}
+
+/* Loading indicator */
+.lmc-msg-loading { opacity: 0.5; font-style: italic; }
+
+/* Input form */
+.lmc-form {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-top: 1px solid #e8e8e8;
+  gap: 8px;
+  background: var(--lmc-bg, #fff);
+  flex-shrink: 0;
+}
+
+.lmc-input {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  min-width: 0;
+}
+
+.lmc-input:focus { border-color: var(--lmc-primary); }
+
+.lmc-send {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--lmc-primary);
+  color: var(--lmc-btn-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s, background 0.15s;
+  padding: 0;
+}
+
+.lmc-send:hover { background: var(--lmc-primary-hover); opacity: 0.88; }
+.lmc-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Utility */
+.lmc-hidden { display: none !important; }
+
+/* ── Mobile ── */
+
+@media (max-width: 480px) {
+  .lmc-chatbot--floating {
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+  }
+
+  .lmc-chatbot--floating .lmc-panel {
+    width: auto;
+    left: 0;
+    right: 0;
+    height: 70vh;
+  }
+
+  .lmc-chatbot--embed .lmc-panel {
+    min-height: 400px;
+    height: 60vh;
+  }
+
+  .lmc-chatbot--embed .lmc-messages,
+  .lmc-chatbot--embed .lmc-form {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
