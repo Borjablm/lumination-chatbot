@@ -10,7 +10,7 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  color: #222;
+  color: var(--lmc-text, #222);
   box-sizing: border-box;
 }
 

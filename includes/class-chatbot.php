@@ -111,6 +111,7 @@ class Lumination_Chatbot {
 		$hover      = Lumination_Core_Settings::get_color( 'primary_hover' );
 		$text       = Lumination_Core_Settings::get_color( 'button_text' );
 		$background = Lumination_Core_Settings::get_color( 'tool_background' );
+		$tool_text  = Lumination_Core_Settings::get_color( 'tool_text' );
 
 		// Migration fallback: use chatbot's own color if Core primary is unset.
 		if ( ! $primary ) {
@@ -132,6 +133,9 @@ class Lumination_Chatbot {
 		}
 		if ( $background ) {
 			$vars[] = '--lmc-bg:' . sanitize_hex_color( $background );
+		}
+		if ( $tool_text ) {
+			$vars[] = '--lmc-text:' . sanitize_hex_color( $tool_text );
 		}
 
 		if ( empty( $vars ) ) {
