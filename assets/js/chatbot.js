@@ -114,16 +114,15 @@
       isFullscreen = !isFullscreen;
 
       if (isFullscreen) {
+        // Add backdrop and block body scroll.
+        backdrop = document.createElement("div");
+        backdrop.className = "lmc-fullscreen-backdrop";
+        document.body.appendChild(backdrop);
+        document.body.style.overflow = "hidden";
+
         root.classList.add("lmc-chatbot--fullscreen");
         fullscreenBtn.querySelector(".lmc-icon-expand").classList.add("lmc-hidden");
         fullscreenBtn.querySelector(".lmc-icon-collapse").classList.remove("lmc-hidden");
-
-        // Add backdrop for floating mode.
-        if (mode === "floating") {
-          backdrop = document.createElement("div");
-          backdrop.className = "lmc-fullscreen-backdrop";
-          document.body.appendChild(backdrop);
-        }
 
         // Show panel if hidden (floating mode).
         panel.classList.remove("lmc-hidden");
@@ -150,6 +149,7 @@
         backdrop = null;
       }
 
+      document.body.style.overflow = "";
       document.removeEventListener("keydown", handleEscapeFullscreen);
     }
 

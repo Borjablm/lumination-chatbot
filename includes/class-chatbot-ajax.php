@@ -144,7 +144,27 @@ class Lumination_Chatbot_Ajax {
 		$parts[] = 'User message:' . "\n" . $message;
 		$prompt  = implode( "\n\n", $parts );
 
-		// ── Build API request body ──────────────────────────────────────────────
+		// ── Build API messages ──────────────────────────────────────────────────
+
+		if ( $file_image ) {
+			// Vision: send image + text as content blocks (Anthropic format).
+			$user_content = array(
+				array(
+					'type'   => 'image',
+					'source' => array(
+						'type'       => 'base64',
+						'media_type' => $file_image['media_type'],
+						'data'       => $file_image['data'],
+					),
+				),
+				array(
+					'type' => 'text',
+					'text' => $prompt,
+				),
+			);
+		} else {
+			$user_content = $prompt;
+		}
 
 		$api_body = array(
 			'persist'  => false,
@@ -152,18 +172,10 @@ class Lumination_Chatbot_Ajax {
 			'messages' => array(
 				array(
 					'role'    => 'user',
-					'content' => $prompt,
+					'content' => $user_content,
 				),
 			),
 		);
-
-		// Attach image as a separate field for the API to process via vision.
-		if ( $file_image ) {
-			$api_body['image'] = array(
-				'media_type' => $file_image['media_type'],
-				'data'       => $file_image['data'],
-			);
-		}
 
 		// ── Call Core API ────────────────────────────────────────────────────────
 

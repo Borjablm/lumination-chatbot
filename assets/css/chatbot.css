@@ -506,16 +506,16 @@
   display: none !important;
 }
 
-/* Centered panel — 90vw × 90vh on desktop, full viewport on mobile */
+/* Centered panel — large on desktop, full viewport on mobile */
 .lmc-chatbot--fullscreen .lmc-panel {
   position: relative !important;
   top: auto !important;
   left: auto !important;
   right: auto !important;
   bottom: auto !important;
-  width: 90vw !important;
-  height: 90vh !important;
-  max-width: 1000px !important;
+  width: 94vw !important;
+  height: 92vh !important;
+  max-width: 1200px !important;
   max-height: none !important;
   min-height: 0 !important;
   border-radius: var(--lmc-radius) !important;

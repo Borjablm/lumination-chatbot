@@ -4,7 +4,7 @@ Tags: chatbot, ai, chat, assistant, education
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -66,6 +66,10 @@ Yes — use the `lumination_core_can_submit` filter with capability `'chatbot'`.
 Yes. On first activation, the plugin automatically migrates `lmc_*` option names to the new `lumination_chatbot_*` names. API credentials are copied to Lumination Core's settings if they are not already set there.
 
 == Changelog ==
+
+= 2.2.1 =
+* Fix: Fullscreen now shows backdrop, blocks scroll, and is wider/centered.
+* Fix: Image attachments sent using vision content blocks (Anthropic format).
 
 = 2.2.0 =
 * New: Fullscreen mode toggle (expand/collapse button in header).
