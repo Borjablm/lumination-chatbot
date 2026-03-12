@@ -165,19 +165,42 @@
   font-size: 15px;
 }
 
-.lmc-close {
-  background: none;
-  border: none;
-  color: var(--lmc-btn-text);
-  font-size: 22px;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0 4px;
-  opacity: 0.8;
-  transition: opacity 0.15s;
+/* Header action buttons group */
+.lmc-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.lmc-close:hover { opacity: 1; }
+.lmc-header-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.lmc-header-btn:hover { opacity: 1; }
+
+.lmc-close {
+  font-size: 22px;
+  padding: 0 4px;
+}
+
+/* Embed header button colors */
+.lmc-chatbot--embed .lmc-header-btn {
+  color: var(--lmc-text, #222);
+  opacity: 0.5;
+}
+
+.lmc-chatbot--embed .lmc-header-btn:hover { opacity: 0.8; }
 
 /* Messages */
 .lmc-messages {
@@ -255,8 +278,154 @@
   margin: 6px 0 2px;
 }
 
-/* Loading indicator */
-.lmc-msg-loading { opacity: 0.5; font-style: italic; }
+/* ── Typing indicator (animated dots) ── */
+
+.lmc-typing {
+  align-self: flex-start;
+  background: #f0f0f0;
+  border-radius: var(--lmc-radius);
+  border-bottom-left-radius: 4px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lmc-typing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #999;
+  animation: lmc-bounce 1.4s ease-in-out infinite both;
+}
+
+.lmc-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.lmc-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+.lmc-typing-dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes lmc-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ── Suggested prompts ── */
+
+.lmc-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 16px 8px;
+  flex-shrink: 0;
+}
+
+.lmc-chatbot--embed .lmc-suggestions {
+  padding: 0 24px 12px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.lmc-suggestion-btn {
+  background: var(--lmc-bg, #fff);
+  border: 1px solid var(--lmc-primary);
+  color: var(--lmc-primary);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.lmc-suggestion-btn:hover {
+  background: var(--lmc-primary);
+  color: var(--lmc-btn-text);
+}
+
+/* ── File upload ── */
+
+.lmc-file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.lmc-attach {
+  background: none;
+  border: none;
+  color: var(--lmc-text, #666);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.lmc-attach:hover {
+  opacity: 1;
+  color: var(--lmc-primary);
+}
+
+/* File preview bar above input */
+.lmc-file-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #555;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.lmc-file-preview-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lmc-file-preview-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.lmc-file-preview-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 16px;
+  padding: 0 2px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.lmc-file-preview-remove:hover { color: #c00; }
+
+/* File indicator in sent message */
+.lmc-file-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.lmc-file-badge svg { flex-shrink: 0; }
 
 /* Input form */
 .lmc-form {
@@ -267,6 +436,7 @@
   gap: 8px;
   background: var(--lmc-bg, #fff);
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .lmc-input {
@@ -302,6 +472,90 @@
 .lmc-send:hover { background: var(--lmc-primary-hover); opacity: 0.88; }
 .lmc-send:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* ── Fullscreen Mode ── */
+
+.lmc-chatbot--fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 999999 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.lmc-chatbot--fullscreen .lmc-bubble {
+  display: none !important;
+}
+
+.lmc-chatbot--fullscreen .lmc-panel {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Fullscreen overlay backdrop */
+.lmc-fullscreen-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999998;
+}
+
+/* Wider messages in fullscreen */
+.lmc-chatbot--fullscreen .lmc-messages {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  gap: 14px;
+}
+
+.lmc-chatbot--fullscreen .lmc-msg {
+  max-width: 80%;
+  font-size: 15px;
+  padding: 12px 18px;
+}
+
+.lmc-chatbot--fullscreen .lmc-msg-assistant {
+  max-width: 85%;
+}
+
+.lmc-chatbot--fullscreen .lmc-form {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px 24px;
+  gap: 12px;
+}
+
+.lmc-chatbot--fullscreen .lmc-input {
+  padding: 12px 18px;
+  font-size: 15px;
+}
+
+.lmc-chatbot--fullscreen .lmc-suggestions {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 24px 12px;
+}
+
 /* Utility */
 .lmc-hidden { display: none !important; }
 
@@ -330,5 +584,10 @@
   .lmc-chatbot--embed .lmc-form {
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .lmc-suggestion-btn {
+    font-size: 12px;
+    padding: 5px 10px;
   }
 }

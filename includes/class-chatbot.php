@@ -77,20 +77,62 @@ class Lumination_Chatbot {
 			wp_add_inline_style( 'lumination-chatbot', $color_css );
 		}
 
+		// ── Markdown + MathJax dependencies ─────────────────────────────────
+
+		// Register marked.js and DOMPurify (same handles as homework helper
+		// so WP deduplicates if both plugins are active).
+		if ( ! wp_script_is( 'lumination-marked', 'registered' ) ) {
+			wp_register_script(
+				'lumination-marked',
+				LUMINATION_CHATBOT_URL . 'assets/js/vendor/marked.min.js',
+				array(),
+				LUMINATION_CHATBOT_VERSION,
+				true
+			);
+		}
+		if ( ! wp_script_is( 'lumination-purify', 'registered' ) ) {
+			wp_register_script(
+				'lumination-purify',
+				LUMINATION_CHATBOT_URL . 'assets/js/vendor/purify.min.js',
+				array(),
+				LUMINATION_CHATBOT_VERSION,
+				true
+			);
+		}
+
+		wp_enqueue_script( 'lumination-marked' );
+		wp_enqueue_script( 'lumination-purify' );
+
+		// Opt in to Core MathJax rendering.
+		Lumination_Core_Math::enqueue( 'lumination-chatbot' );
+
 		wp_enqueue_script(
 			'lumination-chatbot',
 			LUMINATION_CHATBOT_URL . 'assets/js/chatbot.js',
-			array(),
+			array( 'lumination-marked', 'lumination-purify', 'lumination-core-math-renderer' ),
 			LUMINATION_CHATBOT_VERSION,
 			true
 		);
+
+		// ── Localize config for JS ──────────────────────────────────────────
+
+		$suggested_raw = get_option( 'lumination_chatbot_suggested_prompts', '' );
+		$suggested     = array();
+		if ( $suggested_raw ) {
+			$lines = array_filter( array_map( 'trim', explode( "\n", $suggested_raw ) ) );
+			$suggested = array_values( array_slice( $lines, 0, 3 ) );
+		}
 
 		wp_localize_script(
 			'lumination-chatbot',
 			'luminationChatbotConfig',
 			array(
-				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'lumination_chatbot_nonce' ),
+				'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
+				'nonce'            => wp_create_nonce( 'lumination_chatbot_nonce' ),
+				'fileUploadEnabled' => (bool) get_option( 'lumination_chatbot_file_upload', 0 ),
+				'fileMaxSize'      => (int) get_option( 'lumination_chatbot_file_max_size', 2 ) * 1024 * 1024,
+				'fileMaxSizeMB'    => (int) get_option( 'lumination_chatbot_file_max_size', 2 ),
+				'suggestedPrompts' => $suggested,
 			)
 		);
 	}
@@ -216,6 +258,8 @@ class Lumination_Chatbot {
 		$welcome     = get_option( 'lumination_chatbot_welcome', '' );
 		$placeholder = get_option( 'lumination_chatbot_placeholder', __( 'Ask me anything…', 'lumination-chatbot' ) );
 
+		$file_upload = (bool) get_option( 'lumination_chatbot_file_upload', 0 );
+
 		$wrapper_class = 'lmc-chatbot lmc-chatbot--' . esc_attr( $mode );
 		$panel_class   = 'lmc-panel' . ( 'floating' === $mode ? ' lmc-hidden' : '' );
 		?>
@@ -235,14 +279,51 @@ class Lumination_Chatbot {
 			<div class="<?php echo esc_attr( $panel_class ); ?>" role="dialog" aria-label="<?php echo esc_attr( $title ); ?>">
 				<div class="lmc-header">
 					<span class="lmc-title"><?php echo esc_html( $title ); ?></span>
-					<?php if ( 'floating' === $mode ) : ?>
-					<button class="lmc-close" type="button" aria-label="<?php esc_attr_e( 'Close chat', 'lumination-chatbot' ); ?>">&times;</button>
-					<?php endif; ?>
+					<div class="lmc-header-actions">
+						<button class="lmc-header-btn lmc-export" type="button" aria-label="<?php esc_attr_e( 'Export chat', 'lumination-chatbot' ); ?>" title="<?php esc_attr_e( 'Export chat', 'lumination-chatbot' ); ?>">
+							<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+								<polyline points="7 10 12 15 17 10"/>
+								<line x1="12" y1="15" x2="12" y2="3"/>
+							</svg>
+						</button>
+						<button class="lmc-header-btn lmc-fullscreen-toggle" type="button" aria-label="<?php esc_attr_e( 'Toggle fullscreen', 'lumination-chatbot' ); ?>" title="<?php esc_attr_e( 'Fullscreen', 'lumination-chatbot' ); ?>">
+							<svg class="lmc-icon-expand" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<polyline points="15 3 21 3 21 9"/>
+								<polyline points="9 21 3 21 3 15"/>
+								<line x1="21" y1="3" x2="14" y2="10"/>
+								<line x1="3" y1="21" x2="10" y2="14"/>
+							</svg>
+							<svg class="lmc-icon-collapse lmc-hidden" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<polyline points="4 14 10 14 10 20"/>
+								<polyline points="20 10 14 10 14 4"/>
+								<line x1="14" y1="10" x2="21" y2="3"/>
+								<line x1="3" y1="21" x2="10" y2="14"/>
+							</svg>
+						</button>
+						<?php if ( 'floating' === $mode ) : ?>
+						<button class="lmc-header-btn lmc-close" type="button" aria-label="<?php esc_attr_e( 'Close chat', 'lumination-chatbot' ); ?>">&times;</button>
+						<?php endif; ?>
+					</div>
 				</div>
 
 				<div class="lmc-messages" aria-live="polite" aria-atomic="false"></div>
 
 				<form class="lmc-form" novalidate>
+					<?php if ( $file_upload ) : ?>
+					<button class="lmc-attach" type="button" aria-label="<?php esc_attr_e( 'Attach file', 'lumination-chatbot' ); ?>" title="<?php esc_attr_e( 'Attach file', 'lumination-chatbot' ); ?>">
+						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+						</svg>
+					</button>
+					<input
+						class="lmc-file-input"
+						type="file"
+						accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,text/plain"
+						aria-hidden="true"
+						tabindex="-1"
+					/>
+					<?php endif; ?>
 					<input
 						class="lmc-input"
 						type="text"
