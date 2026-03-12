@@ -123,6 +123,11 @@ class Lumination_Chatbot_Ajax {
 			$parts[] = "The user has attached a file. Here is the extracted text content:\n" . $file_context;
 		}
 
+		// Note image attachment in prompt text.
+		if ( $file_image ) {
+			$parts[] = 'The user has attached an image to this message. Analyse it and respond accordingly.';
+		}
+
 		// Append conversation history (last 12 turns).
 		$history_lines = array();
 		foreach ( array_slice( $history, -12 ) as $entry ) {
@@ -139,33 +144,24 @@ class Lumination_Chatbot_Ajax {
 		$parts[] = 'User message:' . "\n" . $message;
 		$prompt  = implode( "\n\n", $parts );
 
-		// ── Build API messages ──────────────────────────────────────────────────
+		// ── Build API request body ──────────────────────────────────────────────
 
-		$api_messages = array();
-
-		if ( $file_image ) {
-			// Vision: send image + text as multipart content.
-			$api_messages[] = array(
-				'role'    => 'user',
-				'content' => array(
-					array(
-						'type'   => 'image',
-						'source' => array(
-							'type'         => 'base64',
-							'media_type'   => $file_image['media_type'],
-							'data'         => $file_image['data'],
-						),
-					),
-					array(
-						'type' => 'text',
-						'text' => $prompt,
-					),
+		$api_body = array(
+			'persist'  => false,
+			'stream'   => false,
+			'messages' => array(
+				array(
+					'role'    => 'user',
+					'content' => $prompt,
 				),
-			);
-		} else {
-			$api_messages[] = array(
-				'role'    => 'user',
-				'content' => $prompt,
+			),
+		);
+
+		// Attach image as a separate field for the API to process via vision.
+		if ( $file_image ) {
+			$api_body['image'] = array(
+				'media_type' => $file_image['media_type'],
+				'data'       => $file_image['data'],
 			);
 		}
 
@@ -173,11 +169,7 @@ class Lumination_Chatbot_Ajax {
 
 		$result = Lumination_Core_API::request(
 			'/lumination-ai/api/v1/agent/chat',
-			array(
-				'persist'  => false,
-				'stream'   => false,
-				'messages' => $api_messages,
-			),
+			$api_body,
 			'lumination-chatbot'
 		);
 

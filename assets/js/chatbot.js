@@ -392,11 +392,16 @@
         .then(function (res) { return res.json(); })
         .then(function (data) {
           if (typing.parentNode) { typing.remove(); }
-          var reply = (data.success && data.data && data.data.reply)
-            ? data.data.reply
-            : "Sorry, I couldn\u2019t get a response.";
-          addMessage("assistant", reply);
-          history.push({ role: "assistant", content: reply });
+          if (data.success && data.data && data.data.reply) {
+            var reply = data.data.reply;
+            addMessage("assistant", reply);
+            history.push({ role: "assistant", content: reply });
+          } else {
+            var errMsg = (data.data && data.data.message)
+              ? data.data.message
+              : "Sorry, I couldn\u2019t get a response.";
+            addMessage("assistant", errMsg);
+          }
         })
         .catch(function () {
           if (typing.parentNode) { typing.remove(); }
