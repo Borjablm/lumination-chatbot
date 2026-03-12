@@ -113,6 +113,7 @@
         // Add backdrop and block body scroll.
         backdrop = document.createElement("div");
         backdrop.className = "lmc-fullscreen-backdrop";
+        backdrop.addEventListener("click", function () { exitFullscreen(); });
         document.body.appendChild(backdrop);
         document.body.style.overflow = "hidden";
 

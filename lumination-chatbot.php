@@ -17,7 +17,7 @@
  * @wordpress-plugin
  * Plugin Name:       Lumination AI Chatbot
  * Description:       AI-powered chat widget with floating and embedded display modes. The chatbot reads the current page for context and answers questions using the Lumination AI API. Requires Lumination Core.
- * Version:           2.3.1
+ * Version:           2.3.2
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Lumination Team
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-define( 'LUMINATION_CHATBOT_VERSION', '2.3.1' );
+define( 'LUMINATION_CHATBOT_VERSION', '2.3.2' );
 define( 'LUMINATION_CHATBOT_FILE',    __FILE__ );
 define( 'LUMINATION_CHATBOT_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'LUMINATION_CHATBOT_URL',     plugin_dir_url( __FILE__ ) );
