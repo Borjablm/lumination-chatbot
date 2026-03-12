@@ -74,7 +74,6 @@
     var welcomeShown = false;
     var isFullscreen = false;
     var sessionUuid  = generateUuid();
-    var pendingFile  = null;
     var backdrop     = null;
 
     var panel         = root.querySelector(".lmc-panel");
@@ -85,9 +84,6 @@
     var messages      = root.querySelector(".lmc-messages");
     var fullscreenBtn = root.querySelector(".lmc-fullscreen-toggle");
     var exportBtn     = root.querySelector(".lmc-export");
-    var attachBtn     = root.querySelector(".lmc-attach");
-    var fileInput     = root.querySelector(".lmc-file-input");
-
     /* ── Mode-specific init ── */
 
     if (mode === "embed") {
@@ -193,72 +189,6 @@
       URL.revokeObjectURL(url);
     }
 
-    /* ── File upload ── */
-
-    if (attachBtn && fileInput) {
-      attachBtn.addEventListener("click", function () {
-        fileInput.click();
-      });
-
-      fileInput.addEventListener("change", function () {
-        var file = fileInput.files[0];
-        if (!file) { return; }
-
-        // Validate size.
-        if (file.size > (cfg.fileMaxSize || 2 * 1024 * 1024)) {
-          alert("File too large. Maximum size is " + (cfg.fileMaxSizeMB || 2) + " MB.");
-          fileInput.value = "";
-          return;
-        }
-
-        pendingFile = file;
-        showFilePreview(file);
-      });
-    }
-
-    function showFilePreview(file) {
-      removeFilePreview();
-
-      var preview = document.createElement("div");
-      preview.className = "lmc-file-preview";
-
-      // Thumbnail for images.
-      if (file.type.startsWith("image/")) {
-        var thumb = document.createElement("img");
-        thumb.className = "lmc-file-preview-thumb";
-        thumb.src = URL.createObjectURL(file);
-        preview.appendChild(thumb);
-      }
-
-      var name = document.createElement("span");
-      name.className = "lmc-file-preview-name";
-      name.textContent = file.name;
-      preview.appendChild(name);
-
-      var remove = document.createElement("button");
-      remove.className = "lmc-file-preview-remove";
-      remove.type = "button";
-      remove.innerHTML = "&times;";
-      remove.addEventListener("click", function () {
-        clearFile();
-      });
-      preview.appendChild(remove);
-
-      // Insert preview before the input row.
-      form.insertBefore(preview, form.firstChild);
-    }
-
-    function removeFilePreview() {
-      var existing = form.querySelector(".lmc-file-preview");
-      if (existing) { existing.remove(); }
-    }
-
-    function clearFile() {
-      pendingFile = null;
-      if (fileInput) { fileInput.value = ""; }
-      removeFilePreview();
-    }
-
     /* ── Suggested prompts ── */
 
     function showSuggestions() {
@@ -330,7 +260,7 @@
 
     /* ── Message rendering ── */
 
-    function addMessage(role, text, fileName) {
+    function addMessage(role, text) {
       var div = document.createElement("div");
       div.className = "lmc-msg lmc-msg-" + role;
 
@@ -338,16 +268,6 @@
         renderAssistantContent(div, text);
       } else {
         div.textContent = text;
-      }
-
-      // Show file badge on user message.
-      if (fileName && role === "user") {
-        var badge = document.createElement("div");
-        badge.className = "lmc-file-badge";
-        badge.innerHTML =
-          '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>' +
-          " " + escapeHtml(fileName);
-        div.appendChild(badge);
       }
 
       messages.appendChild(div);
@@ -363,15 +283,11 @@
       var text = input.value.trim();
       if (!text || busy) { return; }
 
-      var currentFile = pendingFile;
-      var currentFileName = currentFile ? currentFile.name : null;
-
-      addMessage("user", text, currentFileName);
+      addMessage("user", text);
       history.push({ role: "user", content: text });
       input.value = "";
       busy = true;
       form.querySelector(".lmc-send").disabled = true;
-      clearFile();
       hideSuggestions();
 
       var typing = showTyping();
@@ -383,10 +299,6 @@
       formData.append("page_url",     window.location.href);
       formData.append("session_uuid", sessionUuid);
       formData.append("history",      JSON.stringify(history.slice(-12)));
-
-      if (currentFile) {
-        formData.append("file", currentFile);
-      }
 
       fetch(cfg.ajaxUrl, { method: "POST", body: formData })
         .then(function (res) { return res.json(); })

@@ -63,16 +63,6 @@ class Lumination_Chatbot_Settings {
 			'sanitize_callback' => 'absint',
 			'default'           => 1,
 		) );
-		register_setting( $group, 'lumination_chatbot_file_upload', array(
-			'type'              => 'integer',
-			'sanitize_callback' => 'absint',
-			'default'           => 0,
-		) );
-		register_setting( $group, 'lumination_chatbot_file_max_size', array(
-			'type'              => 'integer',
-			'sanitize_callback' => 'absint',
-			'default'           => 2,
-		) );
 		register_setting( $group, 'lumination_chatbot_suggested_prompts', array(
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_textarea_field',
@@ -202,43 +192,6 @@ class Lumination_Chatbot_Settings {
 							class="large-text"
 						><?php echo esc_textarea( get_option( 'lumination_chatbot_suggested_prompts', '' ) ); ?></textarea>
 						<p class="description"><?php esc_html_e( 'Clickable starter questions shown below the welcome message. One prompt per line (max 3 shown).', 'lumination-chatbot' ); ?></p>
-					</td>
-				</tr>
-			</table>
-
-			<h2><?php esc_html_e( 'File Uploads', 'lumination-chatbot' ); ?></h2>
-			<table class="form-table" role="presentation">
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Enable Uploads', 'lumination-chatbot' ); ?></th>
-					<td>
-						<label>
-							<input
-								type="checkbox"
-								name="lumination_chatbot_file_upload"
-								value="1"
-								<?php checked( 1, (int) get_option( 'lumination_chatbot_file_upload', 0 ) ); ?>
-							/>
-							<?php esc_html_e( 'Allow users to attach files to chat messages', 'lumination-chatbot' ); ?>
-						</label>
-						<p class="description"><?php esc_html_e( 'Supports images (JPG, PNG, WebP, GIF) and text documents (PDF, TXT). Images are sent to the AI using vision capabilities.', 'lumination-chatbot' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row">
-						<label for="lumination_chatbot_file_max_size"><?php esc_html_e( 'Max File Size (MB)', 'lumination-chatbot' ); ?></label>
-					</th>
-					<td>
-						<input
-							type="number"
-							id="lumination_chatbot_file_max_size"
-							name="lumination_chatbot_file_max_size"
-							value="<?php echo esc_attr( get_option( 'lumination_chatbot_file_max_size', 2 ) ); ?>"
-							class="small-text"
-							min="1"
-							max="10"
-							step="1"
-						/>
-						<p class="description"><?php esc_html_e( 'Maximum file size in megabytes (1–10 MB).', 'lumination-chatbot' ); ?></p>
 					</td>
 				</tr>
 			</table>

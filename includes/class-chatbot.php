@@ -129,9 +129,6 @@ class Lumination_Chatbot {
 			array(
 				'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
 				'nonce'            => wp_create_nonce( 'lumination_chatbot_nonce' ),
-				'fileUploadEnabled' => (bool) get_option( 'lumination_chatbot_file_upload', 0 ),
-				'fileMaxSize'      => (int) get_option( 'lumination_chatbot_file_max_size', 2 ) * 1024 * 1024,
-				'fileMaxSizeMB'    => (int) get_option( 'lumination_chatbot_file_max_size', 2 ),
 				'suggestedPrompts' => $suggested,
 			)
 		);
@@ -258,8 +255,6 @@ class Lumination_Chatbot {
 		$welcome     = get_option( 'lumination_chatbot_welcome', '' );
 		$placeholder = get_option( 'lumination_chatbot_placeholder', __( 'Ask me anything…', 'lumination-chatbot' ) );
 
-		$file_upload = (bool) get_option( 'lumination_chatbot_file_upload', 0 );
-
 		$wrapper_class = 'lmc-chatbot lmc-chatbot--' . esc_attr( $mode );
 		$panel_class   = 'lmc-panel' . ( 'floating' === $mode ? ' lmc-hidden' : '' );
 		?>
@@ -310,20 +305,6 @@ class Lumination_Chatbot {
 				<div class="lmc-messages" aria-live="polite" aria-atomic="false"></div>
 
 				<form class="lmc-form" novalidate>
-					<?php if ( $file_upload ) : ?>
-					<button class="lmc-attach" type="button" aria-label="<?php esc_attr_e( 'Attach file', 'lumination-chatbot' ); ?>" title="<?php esc_attr_e( 'Attach file', 'lumination-chatbot' ); ?>">
-						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-						</svg>
-					</button>
-					<input
-						class="lmc-file-input"
-						type="file"
-						accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,text/plain"
-						aria-hidden="true"
-						tabindex="-1"
-					/>
-					<?php endif; ?>
 					<input
 						class="lmc-input"
 						type="text"
