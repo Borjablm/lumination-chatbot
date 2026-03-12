@@ -4,7 +4,7 @@ Tags: chatbot, ai, chat, assistant, education
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.2.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -66,6 +66,18 @@ Yes — use the `lumination_core_can_submit` filter with capability `'chatbot'`.
 Yes. On first activation, the plugin automatically migrates `lmc_*` option names to the new `lumination_chatbot_*` names. API credentials are copied to Lumination Core's settings if they are not already set there.
 
 == Changelog ==
+
+= 2.2.0 =
+* New: Fullscreen mode toggle (expand/collapse button in header).
+* New: File upload support — images (vision API) and documents (PDF, TXT).
+* New: Suggested prompts — configurable clickable starter questions.
+* New: Chat export — download conversation as a .txt file.
+* New: Typing indicator (animated three-dot bounce).
+* New: Page context toggle — admin setting to enable/disable page content.
+* Fix: MathJax/LaTeX now renders correctly in chat responses.
+
+= 2.1.0 =
+* Apply tool text color from Core appearance settings.
 
 = 2.0.0 =
 * Complete refactor to hub-and-spoke architecture (requires Lumination Core).

@@ -76,7 +76,7 @@ class Lumination_Chatbot_Ajax {
 		$file_image   = null; // base64 image data for vision API
 
 		$file_upload_enabled = (bool) get_option( 'lumination_chatbot_file_upload', 0 );
-		if ( $file_upload_enabled && ! empty( $_FILES['file'] ) && UPLOAD_ERR_OK === $_FILES['file']['error'] ) {
+		if ( $file_upload_enabled && ! empty( $_FILES['file'] ) && isset( $_FILES['file']['error'] ) && UPLOAD_ERR_OK === $_FILES['file']['error'] ) {
 			$file_result = self::process_file_upload();
 			if ( is_wp_error( $file_result ) ) {
 				wp_send_json_error( array( 'message' => $file_result->get_error_message() ) );
@@ -227,7 +227,8 @@ class Lumination_Chatbot_Ajax {
 	 * @return array|WP_Error Array with 'text' and/or 'image' keys, or WP_Error.
 	 */
 	private static function process_file_upload() {
-		$file = $_FILES['file']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		// Nonce already verified in handle_send() before this method is called.
+		$file = $_FILES['file']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput, WordPress.Security.NonceVerification.Missing
 
 		$max_mb   = (int) get_option( 'lumination_chatbot_file_max_size', 2 );
 		$max_size = $max_mb * 1024 * 1024;
