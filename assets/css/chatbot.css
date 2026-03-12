@@ -474,6 +474,18 @@
 
 /* ── Fullscreen Mode ── */
 
+/* Overlay backdrop behind the panel */
+.lmc-fullscreen-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999998;
+}
+
+/* Reset the wrapper so it doesn't anchor the panel to a corner */
 .lmc-chatbot--fullscreen {
   position: fixed !important;
   top: 0 !important;
@@ -485,39 +497,33 @@
   height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .lmc-chatbot--fullscreen .lmc-bubble {
   display: none !important;
 }
 
+/* Centered panel — 90vw × 90vh on desktop, full viewport on mobile */
 .lmc-chatbot--fullscreen .lmc-panel {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 90vw !important;
+  height: 90vh !important;
+  max-width: 1000px !important;
   max-height: none !important;
   min-height: 0 !important;
-  border-radius: 0 !important;
+  border-radius: var(--lmc-radius) !important;
   border: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Fullscreen overlay backdrop */
-.lmc-fullscreen-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999998;
-}
-
-/* Wider messages in fullscreen */
+/* Wider, centered messages in fullscreen */
 .lmc-chatbot--fullscreen .lmc-messages {
   max-width: 800px;
   width: 100%;
@@ -554,6 +560,15 @@
   width: 100%;
   margin: 0 auto;
   padding: 0 24px 12px;
+}
+
+/* Mobile fullscreen: use entire viewport */
+@media (max-width: 480px) {
+  .lmc-chatbot--fullscreen .lmc-panel {
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+  }
 }
 
 /* Utility */
