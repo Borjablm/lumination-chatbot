@@ -403,7 +403,9 @@
 }
 
 /* Reset the wrapper so it doesn't anchor the panel to a corner */
-.lmc-chatbot--fullscreen {
+.lmc-chatbot--fullscreen,
+.lmc-chatbot--floating.lmc-chatbot--fullscreen,
+.lmc-chatbot--embed.lmc-chatbot--fullscreen {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -424,7 +426,8 @@
 }
 
 /* Centered panel — large on desktop, full viewport on mobile */
-.lmc-chatbot--fullscreen .lmc-panel {
+.lmc-chatbot--fullscreen .lmc-panel,
+.lmc-chatbot--floating.lmc-chatbot--fullscreen .lmc-panel {
   position: relative !important;
   top: auto !important;
   left: auto !important;
