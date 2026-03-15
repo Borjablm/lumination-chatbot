@@ -207,6 +207,12 @@ class Lumination_Chatbot {
 			return;
 		}
 
+		// Skip floating widget if the embed shortcode is already on this page.
+		global $post;
+		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'lumination_chatbot' ) ) {
+			return;
+		}
+
 		self::render_widget_html( 'floating' );
 	}
 
