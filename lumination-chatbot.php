@@ -17,7 +17,7 @@
  * @wordpress-plugin
  * Plugin Name:       Lumination AI Chatbot
  * Description:       AI-powered chat widget with floating and embedded display modes. The chatbot reads the current page for context and answers questions using the Lumination AI API. Requires Lumination Core.
- * Version:           2.3.4
+ * Version:           2.3.5
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Lumination Team
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-define( 'LUMINATION_CHATBOT_VERSION', '2.3.4' );
+define( 'LUMINATION_CHATBOT_VERSION', '2.3.5' );
 define( 'LUMINATION_CHATBOT_FILE',    __FILE__ );
 define( 'LUMINATION_CHATBOT_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'LUMINATION_CHATBOT_URL',     plugin_dir_url( __FILE__ ) );
@@ -45,11 +45,12 @@ require_once LUMINATION_CHATBOT_DIR . 'vendor/plugin-update-checker/plugin-updat
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
-PucFactory::buildUpdateChecker(
+$lmc_update_checker = PucFactory::buildUpdateChecker(
 	'https://github.com/Borjablm/lumination-chatbot/',
 	__FILE__,
 	'lumination-chatbot'
 );
+$lmc_update_checker->getVcsApi()->enableReleaseAssets();
 
 // ── Option migration from v1 (old lmc_* keys) ────────────────────────────────
 //
