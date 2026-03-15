@@ -114,7 +114,7 @@
         backdrop = document.createElement("div");
         backdrop.className = "lmc-fullscreen-backdrop";
         backdrop.addEventListener("click", function () { exitFullscreen(); });
-        document.body.appendChild(backdrop);
+        root.insertBefore(backdrop, root.firstChild);
         document.body.style.overflow = "hidden";
 
         root.classList.add("lmc-chatbot--fullscreen");
